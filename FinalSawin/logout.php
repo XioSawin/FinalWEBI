@@ -1,0 +1,155 @@
+<?php
+	include('./classes/DB.php');
+	include('./classes/Login.php');
+
+	if(!Login::isLoggedIn()){
+		die("Sesión no iniciada.");
+	}
+
+	if(isset($_POST['confirm'])){
+		//cerrar sesión en todos los dispositivos iniciados if checkbox checked.
+		if(isset($_POST['alldevices'])){
+			DB::query('DELETE FROM login_tokens WHERE user_id=:userid', array(':userid'=>Login::isLoggedIn()));
+
+		} else {
+			//if cookie has been set, delete it.
+			if(isset($_COOKIE['RSID'])){
+				DB::query('DELETE FROM login_tokens WHERE token=:token', array(':token'=>sha1($_COOKIE['RSID'])));
+			}
+			//set cookie to automatically expire.
+			setcookie('RSID', '1', time()-3600);
+			setcookie('RSID_', '1', time()-3600);
+        }
+        
+	}
+?>
+
+<!--<h1>Cerrar Sesión</h1>
+<p>¿Está seguro que quiere cerrar sesión?</p>
+<form action="logout.php" method="post">
+	<input type="checkbox" name="alldevices" value="alldevices"> ¿Cerrar sesión en todos los dispositivos? <br/>
+	<input type="submit" name="confirm" value="Confirmar">
+</form>-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrar Sesión - Final WEB I</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/Footer-Dark.css">
+    <link rel="stylesheet" href="assets/css/Highlight-Clean.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean1.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/untitled.css">
+</head>
+
+<body>
+    <header class="hidden-sm hidden-md hidden-lg">
+        <div class="searchbox">
+            <form>
+                <h1 class="text-left">Final WEB I</h1>
+                <div class="searchbox"><i class="glyphicon glyphicon-search"></i>
+                                        <input class="form-control sbox" type="text">
+                                        <ul class="list-group autocomplete" style="position:absolute;width:100%; z-index: 100">
+                                        </ul>
+                        </div>
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">MENU <span class="caret"></span></button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li role="presentation"><a href="#">Mi Perfil</a></li>
+                        <li class="divider" role="presentation"></li>
+                        <li role="presentation"><a href="index.html">Inicio </a></li>
+                        <li role="presentation"><a href="notify.php">Notificaciones </a></li>
+                        <li role="presentation"><a href="cambiar-password.php">Mi Cuenta</a></li>
+                        <li role="presentation"><a href="logout.php">Cerrar Sesión </a></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <hr>
+    </header>
+    <div>
+        <nav class="navbar navbar-default hidden-xs navigation-clean">
+            <div class="container">
+                <div class="navbar-header"><a class="navbar-brand navbar-link" href="#"><i class="icon ion-ios-navigate"></i></a>
+                    <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                </div>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <form class="navbar-form navbar-left">
+                        <div class="searchbox"><i class="glyphicon glyphicon-search"></i>
+                                        <input class="form-control sbox" type="text">
+                                        <ul class="list-group autocomplete" style="position:absolute;width:100%; z-index: 100">
+                                        </ul>
+                        </div>
+                    </form>
+                    <ul class="nav navbar-nav hidden-md hidden-lg navbar-right">
+                        <li role="presentation"><a href="index.html">Inicio </a></li>
+                        <li class="dropdown open"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">Usuario <span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                            <li role="presentation"><a href="perfil.php?username=<?php echo $username;?>">Mi Perfil</a></li>
+                            <li class="divider" role="presentation"></li>
+                            <li role="presentation"><a href="index.html">Inicio </a></li>
+                            <li role="presentation"><a href="notify.php">Notificaciones </a></li>
+                            <li role="presentation"><a href="cambiar-password.php">Mi Cuenta</a></li>
+                            <li role="presentation"><a href="logout.php">Cerrar Sesión </a></li>
+                        </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right">
+                        <li class="active" role="presentation"><a href="index.html">Inicio</a></li>
+                        <li role="presentation"><a href="notify.php">Notificaciones</a></li>
+                        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#">Usuario <span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                            <li role="presentation"><a href="perfil.php?username=<?php echo $username;?>">Mi Perfil</a></li>
+                            <li class="divider" role="presentation"></li>
+                            <li role="presentation"><a href="index.html">Inicio </a></li>
+                            <li role="presentation"><a href="notify.php">Notificaciones </a></li>
+                            <li role="presentation"><a href="cambiar-password.php">Mi Cuenta</a></li>
+                            <li role="presentation"><a href="logout.php">Cerrar Sesión </a></li>
+                        </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h1> </h1></div>
+    <div>
+        <div class="container">
+			<div class="login-clean">
+				<form action="logout.php" method="post">
+					<h2 class="sr-only">Cerrar Sesión</h2>
+					<div class="form-group">
+						<p>¿Está seguro que quiere cerrar sesión?</p>
+					</div>
+					<div class="form-group">
+						<input class="form-control" type="checkbox" name="alldevices" value="alldevices"> ¿Cerrar sesión en todos los dispositivos? <br />
+					</div>
+					<div class="form-group">
+						<input class="btn btn-primary btn-block" type="submit" name="confirm" value="Confirmar" >
+					</div>
+				</form>
+			</div>
+        </div>
+    </div>
+    <div class="footer-dark" style="position: relative">
+        <footer>
+            <div class="container">
+                <p class="copyright">Final WEB I - Xiomara Sawin - UCES 1° cuatrimestre 2019</p>
+            </div>
+        </footer>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-animation.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.js"></script>
+
+</body>
+</html>
